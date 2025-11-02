@@ -4,11 +4,11 @@ import { useState } from "react";
 import "./PostUser.css";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+import { useNavigate } from "react-router-dom";
 
 const PsotUser = () => {
 
     const [formData, setFormData] = useState ({
-
         name: "",
         email: "",
         phone: "",
@@ -16,24 +16,48 @@ const PsotUser = () => {
     });
 
     const handleInputChange = (event) => {
-        const { name, value } = event.target;
+        const {name, value} = event.target;
         setFormData ({
             ...formData,
             [name]: value,
         })
     }
 
+    const navigate = useNavigate();
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        console.log(formData);
+
+        try {
+            const response = await fetch ("http://localhost:8080/api/employee", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(formData),
+            });
+
+            const data = await response.json();
+            console.log("Employee creaeted:", data);
+            navigate("/");
+        } catch (error) {
+            console.log("Error creating employee:", error.message);
+        }
+    }
+
     return (
         <>
         <div className="center-form">
             <h1>Post new Employee</h1>
-            <Form>
+            <Form onSubmit={handleSubmit}>
                 <Form.Group controlId="formBasicName">
                     <Form.Control 
                     type= "text"
                     name= "name"
                     placeholder="Enter name"
-                    value={FormData.name}
+                    value={formData.name}
                     onChange={handleInputChange}
                     />
                 </Form.Group>
@@ -43,7 +67,7 @@ const PsotUser = () => {
                     type= "email"
                     name= "email"
                     placeholder="Enter email"
-                    value={FormData.email}
+                    value={formData.email}
                     onChange={handleInputChange}
                     />
                 </Form.Group>
@@ -53,7 +77,7 @@ const PsotUser = () => {
                     type= "text"
                     name= "phone"
                     placeholder="Enter phone"
-                    value={FormData.phone}
+                    value={formData.phone}
                     onChange={handleInputChange}
                     />
                 </Form.Group>
@@ -63,12 +87,12 @@ const PsotUser = () => {
                     type= "text"
                     name= "department"
                     placeholder="Enter department"
-                    value={FormData.department}
+                    value={formData.department}
                     onChange={handleInputChange}
                     />
                 </Form.Group>
 
-                <Button variant="primary" type="submit" className="w-100"></Button>
+                <Button variant="primary" type="submit" className="w-100">Post Employee</Button>
             </Form>
         </div>
         </>
