@@ -23,6 +23,24 @@ const Dashboard = () => {
         fetchEmployees();
     }, []);
 
+    const handleDelete = async (employeeId) => {
+        try {
+            const response = await fetch(`http://localhost:8080/api/employee/${employeeId}`, {
+                method: "DELETE",
+            });
+
+            if(response.ok){
+                setEmployees((prevEmployees) =>
+                prevEmployees.filter((employee) => employee.id !== employeeId))
+            }
+
+            console.log(`Employee with ID ${employeeId} deleted successfully`);
+            
+        } catch (error) {
+            console.error("Error deleting employee:", error.message);
+        }
+    }
+
     return (
         <>
         <Container className="mt-5">
@@ -48,7 +66,7 @@ const Dashboard = () => {
                                     <td>{employee.department}</td>
                                     <td>
                                         <Button variant="outline-secondary">Update</Button>{" "}
-                                        <Button variant="outline-danger">Delete</Button>
+                                        <Button variant="outline-danger" onClick={()=> handleDelete(employee.id)}>Delete</Button>
                                     </td>
                                 </tr>
                             ))}
