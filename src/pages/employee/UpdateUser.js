@@ -42,7 +42,7 @@ const UpdateUser = () => {
 
             try {
                 const response =await fetch(`http://localhost:8080/api/employee/${id}`, {
-                    method: "Patch",
+                    method: "PATCH",
                     headers: {
                         "Content-Type": "application/json",
                     },

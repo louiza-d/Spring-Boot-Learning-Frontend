@@ -72,7 +72,7 @@ const Dashboard = () => {
                                     <td>{employee.phone}</td>
                                     <td>{employee.department}</td>
                                     <td>
-                                        <Button variant="outline-secondary" onClick={()=> handleUpdate(employee.id)}>Update</Button>{" "}
+                                        <Button variant="outline-warning" onClick={()=> handleUpdate(employee.id)}>Update</Button>{" "}
                                         <Button variant="outline-danger" onClick={()=> handleDelete(employee.id)}>Delete</Button>
                                     </td>
                                 </tr>
