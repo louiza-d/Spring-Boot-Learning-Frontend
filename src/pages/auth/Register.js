@@ -48,7 +48,6 @@ const Register = () => {
 
             if (response.ok) {
                 const data = await response.json();
-                // Connexion automatique après l'inscription
                 login(data.token);
                 navigate('/');
             } else {
