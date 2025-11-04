@@ -27,7 +27,20 @@ const UpdateUser = () => {
         useEffect (() => {
             const fetchEmployee = async () => {
                 try {
-                    const response = await fetch(`http://localhost:8080/api/employee/${id}`);
+                    const token = localStorage.getItem('token');
+                    const response = await fetch(`http://localhost:8080/api/employee/${id}`, {
+                        headers: token ? { Authorization: `Bearer ${token}` } : {},
+                    });
+
+                    if (!response.ok) {
+                        console.error('Error fetching employee, status:', response.status);
+                        if (response.status === 401 || response.status === 403) {
+                            localStorage.removeItem('token');
+                            window.location.replace('/signin');
+                        }
+                        return;
+                    }
+
                     const data = await response.json();
                     setFormData(data);
                 } catch (error) {
@@ -41,13 +54,24 @@ const UpdateUser = () => {
             e.preventDefault();
 
             try {
+                const token = localStorage.getItem('token');
                 const response =await fetch(`http://localhost:8080/api/employee/${id}`, {
                     method: "PATCH",
                     headers: {
                         "Content-Type": "application/json",
+                        ...(token ? { Authorization: `Bearer ${token}` } : {}),
                     },
                     body: JSON.stringify(formData),
             });
+
+            if (!response.ok) {
+                console.error('Failed to update user, status:', response.status);
+                if (response.status === 401 || response.status === 403) {
+                    localStorage.removeItem('token');
+                    window.location.replace('/signin');
+                }
+                return;
+            }
 
             const data = await response.json();
             console.log("User updated successfully:", data);
