@@ -4,10 +4,11 @@ import { useState } from "react";
 import "./PostUser.css";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+import Alert from "react-bootstrap/Alert";
 import { useNavigate } from "react-router-dom";
 
-const PsotUser = () => {
-
+const PostUser = () => {
+    const [error, setError] = useState('');
     const [formData, setFormData] = useState ({
         name: "",
         email: "",
@@ -27,23 +28,39 @@ const PsotUser = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        console.log(formData);
+        setError('');
 
         try {
-            const response = await fetch ("http://localhost:8080/api/employee", {
+            const token = localStorage.getItem('token');
+            const response = await fetch("http://localhost:8080/api/employee", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
+                    ...(token ? { Authorization: `Bearer ${token}` } : {}),
                 },
                 body: JSON.stringify(formData),
             });
 
-            const data = await response.json();
-            console.log("Employee creaeted:", data);
-            navigate("/");
+            if (!response.ok) {
+                console.error('Failed to create employee, status:', response.status);
+                if (response.status === 401 || response.status === 403) {
+                    localStorage.removeItem('token');
+                    window.location.replace('/signin');
+                    return;
+                }
+                setError('Erreur lors de la création de l\'employé. Statut: ' + response.status);
+                return;
+            }
+            try {
+                const responseObj = await response.json();
+                console.log('Employee created:', responseObj);
+            } catch (parseError) {
+                console.warn('Could not parse JSON response after creating employee:', parseError);
+            }
+            navigate('/');
         } catch (error) {
-            console.log("Error creating employee:", error.message);
+            console.error("Error creating employee:", error);
+            setError('Erreur de connexion au serveur');
         }
     }
 
@@ -51,6 +68,11 @@ const PsotUser = () => {
         <>
         <div className="center-form">
             <h1>Post new Employee</h1>
+            {error && (
+                <Alert variant="danger" className="mb-3">
+                    {error}
+                </Alert>
+            )}
             <Form onSubmit={handleSubmit}>
                 <Form.Group controlId="formBasicName">
                     <Form.Control 
@@ -99,4 +121,4 @@ const PsotUser = () => {
     )
 }
 
-export default PsotUser;
+export default PostUser;
