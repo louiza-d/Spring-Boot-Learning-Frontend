@@ -35,10 +35,15 @@ const SignIn = () => {
 
             if (response.ok) {
                 const data = await response.json();
-                // Utiliser le contexte d'authentification pour la connexion
-                login(data.token);
-                // Rediriger vers le dashboard
-                navigate('/');
+                if (data.token) {
+                    console.log('Login successful, token=', data.token);
+                    login(data.token);
+                    
+                    window.location.replace('/');
+                } else {
+                    console.warn('No token returned from login response', data);
+                    navigate('/');
+                }
             } else {
                 setError('Email ou mot de passe incorrect');
             }
