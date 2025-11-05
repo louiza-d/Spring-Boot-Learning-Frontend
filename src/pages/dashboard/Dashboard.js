@@ -4,6 +4,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Table  from "react-bootstrap/Table";
 import { useNavigate } from "react-router-dom";
+import { apiFetchConfig } from "../../services/apiFetchConfig";
 
 const Dashboard = () => {
 
@@ -14,18 +15,11 @@ const Dashboard = () => {
         const fetchEmployees = async () => {
             try {
                 
-                  const token = localStorage.getItem('token');
-                const response = await fetch ("http://localhost:8080/api/employees", {
-                    headers: token ? { Authorization: `Bearer ${token}` } : {},
-                });
+                  
+                const response = await apiFetchConfig ("http://localhost:8080/api/employees");
 
-                if (!response.ok) {
-                   
+                if (!response.ok) {                 
                     console.error('Error fetching employees, status:', response.status);
-                    if (response.status === 401 || response.status === 403) {
-                        localStorage.removeItem('token');
-                        window.location.replace('/signin');
-                    }
                     return;
                 }
                 const data = await response.json();
