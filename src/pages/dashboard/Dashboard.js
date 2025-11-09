@@ -13,9 +13,7 @@ const Dashboard = () => {
 
     useEffect (() => {
         const fetchEmployees = async () => {
-            try {
-                
-                  
+            try {  
                 const response = await apiFetchConfig ("http://localhost:8080/api/employees");
 
                 if (!response.ok) {                 
@@ -34,11 +32,9 @@ const Dashboard = () => {
     }, []);
 
     const handleDelete = async (employeeId) => {
-        try {
-            const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:8080/api/employee/${employeeId}`, {
-                method: "DELETE",
-                headers: token ? { Authorization: `Bearer ${token}` } : {},
+        try {       
+            const response = await apiFetchConfig(`http://localhost:8080/api/employee/${employeeId}`, {
+                method: "DELETE",              
             });
 
             if(response.ok){
@@ -51,11 +47,7 @@ const Dashboard = () => {
             return;
             }
 
-            console.error('Failed to delete employee, status:', response.status);
-            if (response.status === 401 || response.status === 403) {
-                localStorage.removeItem('token');
-                window.location.replace('/signin');
-            }
+        
             
         } catch (error) {
             console.error("Error deleting employee:", error.message);
