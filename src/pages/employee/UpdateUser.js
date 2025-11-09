@@ -4,6 +4,7 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { useParams } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
+import { apiFetchConfig } from "../../services/apiFetchConfig";
 
 const UpdateUser = () => {
     const {id} = useParams();
@@ -26,20 +27,8 @@ const UpdateUser = () => {
 
         useEffect (() => {
             const fetchEmployee = async () => {
-                try {
-                    const token = localStorage.getItem('token');
-                    const response = await fetch(`http://localhost:8080/api/employee/${id}`, {
-                        headers: token ? { Authorization: `Bearer ${token}` } : {},
-                    });
-
-                    if (!response.ok) {
-                        console.error('Error fetching employee, status:', response.status);
-                        if (response.status === 401 || response.status === 403) {
-                            localStorage.removeItem('token');
-                            window.location.replace('/signin');
-                        }
-                        return;
-                    }
+                try {             
+                    const response = await apiFetchConfig(`http://localhost:8080/api/employee/${id}`);
 
                     const data = await response.json();
                     setFormData(data);
@@ -54,24 +43,11 @@ const UpdateUser = () => {
             e.preventDefault();
 
             try {
-                const token = localStorage.getItem('token');
-                const response =await fetch(`http://localhost:8080/api/employee/${id}`, {
+              
+                const response =await apiFetchConfig(`http://localhost:8080/api/employee/${id}`, {
                     method: "PATCH",
-                    headers: {
-                        "Content-Type": "application/json",
-                        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-                    },
                     body: JSON.stringify(formData),
             });
-
-            if (!response.ok) {
-                console.error('Failed to update user, status:', response.status);
-                if (response.status === 401 || response.status === 403) {
-                    localStorage.removeItem('token');
-                    window.location.replace('/signin');
-                }
-                return;
-            }
 
             const data = await response.json();
             console.log("User updated successfully:", data);
