@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import { useNavigate, Link } from 'react-router-dom';
-//import { useAuth } from '../../context/AuthContext';
+import { Link } from 'react-router-dom';
 import './Register.css';
 import Notification from '../../components/Notification';
 
 
 const Register = () => {
-    const navigate = useNavigate();
+   
     //const { login } = useAuth();
     const [formData, setFormData] = useState({
         name: '',
