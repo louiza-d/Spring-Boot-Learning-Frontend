@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+//import { useAuth } from '../../context/AuthContext';
 import './Register.css';
+import Notification from '../../components/Notification';
+
 
 const Register = () => {
     const navigate = useNavigate();
-    const { login } = useAuth();
+    //const { login } = useAuth();
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -15,6 +17,12 @@ const Register = () => {
         confirmPassword: ''
     });
     const [error, setError] = useState('');
+
+    const [notification, setNotification] = useState({
+        message: '',
+        type: 'success'
+    });
+
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
@@ -46,13 +54,18 @@ const Register = () => {
                 }),
             });
 
-            if (response.ok) {
-                const data = await response.json();
-                login(data.token);
-                navigate('/');
+            if (response.status === 201) {
+                 setNotification({
+                    message: 'Email de confirmation envoyé ! Vérifiez votre boîte mail.',
+                    type: 'success'
+                }); 
+               // navigate('');
             } else {
                 const errorData = await response.json();
-                setError(errorData.message || 'Erreur lors de l\'inscription');
+                setNotification({
+                    message : errorData.message || 'Erreur lors de l\'inscription',
+                    type: 'danger'
+                });
             }
         } catch (error) {
             setError('Erreur de connexion au serveur');
@@ -65,6 +78,11 @@ const Register = () => {
             <div className="register-form">
                 <h2>Inscription Admin</h2>
                 {error && <div className="alert alert-danger">{error}</div>}
+                <Notification 
+                    message={notification.message} 
+                    type={notification.type} 
+                    onClose={() => setNotification({ message: '', type: 'success' })} 
+                />
                 <Form onSubmit={handleSubmit}>
                     <Form.Group controlId="formBasicName">
                         <Form.Control
