@@ -9,6 +9,7 @@ import UpdateUser from "./pages/employee/UpdateUser";
 import SignIn from "./pages/auth/SignIn";
 import Register from "./pages/auth/Register";
 import { useAuth } from './context/AuthContext';
+import VerifyEmail from "./pages/VerifyEmail";
 
 function App() {
   const { isAuthenticated } = useAuth();
@@ -42,6 +43,7 @@ function App() {
           </ProtectedRoute>
         } />
         <Route path="*" element={<NoMatch />} />
+         <Route path="/verify" element={<VerifyEmail />} />
       </Routes>
     </>
   );
